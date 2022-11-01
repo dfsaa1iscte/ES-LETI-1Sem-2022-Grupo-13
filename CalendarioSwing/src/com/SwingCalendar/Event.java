@@ -1,6 +1,6 @@
 package com.SwingCalendar;
 public class Event {
-		private String chair;
+	private String chair;
 	private String dateStart;
 	private String dateEnd;
 	
