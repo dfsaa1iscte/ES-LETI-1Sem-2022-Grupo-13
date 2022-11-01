@@ -76,26 +76,19 @@ public class Main {
 		prevMonthBtn.addActionListener(e -> cal.prevMonth());
 
 		JButton addEvent = new JButton("Add event");
-			
-			cal.addCalendarEmptyClickListener(e -> {
-				System.out.println(e.getDateTime());
-				System.out.println(Calendar.roundTime(e.getDateTime().toLocalTime(), 30));
-				System.out.println(e.getDateTime().getYear());
-				System.out.println(e.getDateTime().getMonthValue());
-				System.out.println(e.getDateTime().getDayOfMonth());
-				
-				addEvent.addActionListener(e1 -> { 
-					JFrame frame = new JFrame();
-					String horasFim = JOptionPane.showInputDialog(frame, "Hora de término do evento: (hh:mm)");
-					String[] horaFimEvento = horasFim.split(":");
-					int horaFim = Integer.parseInt(horaFimEvento[0]);
-					int minutoFim = Integer.parseInt(horaFimEvento[1]);
-					String descricao = JOptionPane.showInputDialog(frame, "Descrição do evento:");
-					String descricaoEvento = descricao;
-					calEvents.add(new CalendarEvent(LocalDate.of(e.getDateTime().getYear(), e.getDateTime().getMonthValue(), e.getDateTime().getDayOfMonth()), LocalTime.of(e.getDateTime().getHour(), e.getDateTime().getMinute()), LocalTime.of(horaFim, minutoFim), descricaoEvento));
-					cal.setEvents(calEvents);
+		cal.addCalendarEmptyClickListener(e -> {
+			addEvent.addActionListener(e1 -> { 
+				JFrame frame = new JFrame();
+				String horasFim = JOptionPane.showInputDialog(frame, "Hora de término do evento: (hh:mm)");
+				String[] horaFimEvento = horasFim.split(":");
+				int horaFim = Integer.parseInt(horaFimEvento[0]);
+				int minutoFim = Integer.parseInt(horaFimEvento[1]);
+				String descricao = JOptionPane.showInputDialog(frame, "Descrição do evento:");
+				String descricaoEvento = descricao;
+				calEvents.add(new CalendarEvent(LocalDate.of(e.getDateTime().getYear(), e.getDateTime().getMonthValue(), e.getDateTime().getDayOfMonth()), LocalTime.of(e.getDateTime().getHour(), e.getDateTime().getMinute()), LocalTime.of(horaFim, minutoFim), descricaoEvento));
+				cal.setEvents(calEvents);
 			});
-			
+
 		});
 
 		JButton removeEvent = new JButton("Remove");
@@ -109,10 +102,16 @@ public class Main {
 
 
 
-		//TODO
-		//JButton detalhes = new JButton("Details");
-		//detalhes.addActionListener(e -> { 
-
+		//TODO - Faltam detalhes sobre o dono do calendário cujo evento foi selecionado
+		JButton detalhes = new JButton("Details");
+		cal.addCalendarEventClickListener(e -> {
+			CalendarEvent event = e.getCalendarEvent();
+			detalhes.addActionListener(e1 -> {
+				JFrame frame = new JFrame();
+				JOptionPane.showMessageDialog(frame, event);
+			});
+		});
+		
 		//TODO
 		//JButton pdf = new JButton("Convert to PDF");
 		//pdf.addActionListener(e -> { 
@@ -127,6 +126,7 @@ public class Main {
 		JPanel eventControls = new JPanel();
 		eventControls.add(addEvent);
 		eventControls.add(removeEvent);
+		eventControls.add(detalhes);
 
 		frm.add(weekControls, BorderLayout.NORTH);
 		frm.add(eventControls, BorderLayout.SOUTH);
