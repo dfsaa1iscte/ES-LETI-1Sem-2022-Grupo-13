@@ -1,12 +1,21 @@
 package com.SwingCalendar;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -21,7 +30,6 @@ public class Main {
 	public static void main(String[] args) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		JFrame frm = new JFrame();
 		Gson gson = new Gson();
-
 		Eventos evento = null;
 
 		try (Reader reader = new FileReader("C:\\Users\\azeit\\git\\ES-LETI-1Sem-2022-Grupo-13\\CalendarioSwing\\agenda.json")) {
@@ -111,10 +119,8 @@ public class Main {
 				JOptionPane.showMessageDialog(frame, event);
 			});
 		});
-		
-		//TODO
-		//JButton pdf = new JButton("Convert to PDF");
-		//pdf.addActionListener(e -> { 
+
+		JButton pdf = new JButton("Convert to PDF");
 
 		JPanel weekControls = new JPanel();
 		weekControls.add(prevMonthBtn);
@@ -127,6 +133,7 @@ public class Main {
 		eventControls.add(addEvent);
 		eventControls.add(removeEvent);
 		eventControls.add(detalhes);
+		eventControls.add(pdf);
 
 		frm.add(weekControls, BorderLayout.NORTH);
 		frm.add(eventControls, BorderLayout.SOUTH);
@@ -134,6 +141,33 @@ public class Main {
 		frm.setSize(1000, 900);
 		frm.setVisible(true);
 		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	}
 
+		//TODO
+		pdf.addActionListener(e -> { 
+			BufferedImage img = new BufferedImage(frm.getWidth(), frm.getHeight(), BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2d = img.createGraphics();
+			frm.printAll(g2d);
+			g2d.dispose();
+			try {
+				ImageIO.write(img, "png", new File("filename.png"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			try {
+			Document document = new Document(PageSize.A2.rotate(), 0, frm.getHeight(), 0, frm.getWidth());
+			PdfWriter.getInstance(document, new FileOutputStream("test.pdf"));
+			document.open();
+			Image image = ImageIO.read(new File("filename.png"));
+			document.add(com.itextpdf.text.Image.getInstance("filename.png"));
+			document.close();
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+
+		});
+	}
 }
